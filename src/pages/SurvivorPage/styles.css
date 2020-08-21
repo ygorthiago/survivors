@@ -1,52 +1,28 @@
-.container header {
-  /* margin-top: 48px; */
-  width: 100%vh;
-  height: 100%vh;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: #263238;
-  height: 150px;
-}
 
-.logo {
-  width: 200px;
-  color: white;
-  font-size: 30px;
-}
-
-.container header a {
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 25px;
-  display: flex;
-  align-items: center;
-}
-
-.container header a svg {
-  margin-right: 16px;
-  color: #a63a3a;
-  width:48px;
-  height:48px;
-}
 
 .id-container {
   margin: 30px auto;
   margin-top: -30px;
-  padding: 64px;
+  padding: 30px;
   max-width: 830px;
+  height: 150px;
   background: #FFF;
   border-radius: 8px;
-
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  justify-content: space-around;
+  align-items: center;
+  /* flex-direction: center; */
 }
 
 .survivor-id-input {
   position: relative;
   display: flex;
   justify-content: space-between;
+}
+
+.id-container h3 {
+   justify-content: left;   
+   margin-bottom: 10px;
 }
 
 .id-container input {
@@ -69,7 +45,7 @@
 }
 
 .id-container button {
-  width: 260px;
+  width: 100px;
   height: 50px;
   background: #08a14e;
   border-radius: 8px;
@@ -81,7 +57,11 @@
   /* margin-top: 40px; */
   transition: background-color 0.2s;
   cursor: pointer;
-  margin-left: 100px;
+  margin-left: 10px;
+}
+
+.id-container button:hover {
+  background-color: #069447;
 }
 
 .container main {

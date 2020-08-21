@@ -1,0 +1,40 @@
+.register-complete {
+  background: url('../../assets/background.svg') no-repeat center;
+  background-color: #263238;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  
+}
+
+.register-complete div h1 {
+ margin-top: 10px;
+ margin-bottom: 30px;
+}
+
+.register-complete a {
+  width: 60%;
+  margin-top: 50px;
+  margin-left: 20%;
+  height: 6rem;
+  border-radius: 0.8rem;
+  font: 700 1.5rem Archivo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+  color: #f0f0f7;
+
+  transition: background-color 0.2s;
+  background: #08a14e
+}
+
+.register-complete a:hover {
+  background: #069447;
+
+}

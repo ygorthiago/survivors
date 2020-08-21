@@ -1,39 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import {FiArrowLeft, FiMinusCircle, FiPlusCircle} from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+import { FiMinusCircle, FiPlusCircle} from 'react-icons/fi';
+import { useAlert } from "react-alert";
+
+import Captcha from '../../components/RegisterSurvivorComponents/Captcha';
+import Header from '../../components/Header';
+
 import api from '../../services/api';
-import Captcha from '../../components/Captcha';
 
 import './styles.css';
+import { useHistory } from 'react-router-dom';
 
 function RegisterSurvivor() {
+  const alert = useAlert();
+  const history = useHistory();
   const [items, setItems] = useState([]);
 
   const [initialPosition, setInitialPosition] = useState([0, 0]);
   const [selectedPosition, setSelectedPosition] = useState([0, 0]);
 
-  const [selectedItems, setSelectedItems] = useState([{}]);
-
-  const [qtdItem, setQtdItem] = useState(5);
+  const [inventory, setInventory] = useState([
+    {
+      item_id: 1,
+      qtd: 0
+    },
+    {
+      item_id: 2,
+      qtd: 0
+    },
+    {
+      item_id: 3,
+      qtd: 0
+    },
+    {
+      item_id: 4,
+      qtd: 0
+    }
+  ]);
 
   const [formData, setFormData] = useState({
     name: '',
     age: '',
-    gender: '',
+    gender: ''
   });
-
-  const [isRecaptchaVerified, setIsRecaptchaVerified] = useState(false); //////
-
-  function handleIncrementQtdItem() {
-      setQtdItem(qtdItem + 1)
-  }
-
-  function handleDecrementQtdItem() {
-  if (qtdItem >= 1){
-    setQtdItem(qtdItem - 1);
-  }
-}
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(position => {
@@ -48,6 +57,22 @@ function RegisterSurvivor() {
       setItems(response.data);
     })
   }, []);
+
+  const incrementQtdItem = index => e => {
+    let newArr = [...inventory];
+    newArr[index] = {item_id: index +1, qtd: inventory[index].qtd +1};
+
+    setInventory(newArr);
+  }
+
+  const decrementQtdItem = index => e => {
+    if (inventory[index].qtd > 0) {
+      let newArr = [...inventory];
+      newArr[index] = {item_id: index +1, qtd: inventory[index].qtd -1};
+  
+      setInventory(newArr);
+    }
+  }
 
   function handleMapCLick(event){
     setSelectedPosition([
@@ -65,37 +90,10 @@ function RegisterSurvivor() {
     })
   }
 
-  function handleSelectItem(id){
-    const alreadySelected = selectedItems.findIndex(item => item === id);
-    
+  var captchaVerified = false;
 
-    if (alreadySelected >= 0) {
-      const filteredItems = selectedItems.filter(item => item !== id);
-      setSelectedItems(filteredItems);
-    } else {
-      setSelectedItems([...selectedItems, id]);
-    }
-    
-  }
-
-  const survivorItems = items.map((item)=> {
-    return {id: item.id, qtd: 0}
-  })
-
-  function handleQtdItem(id){ 
-    // survivorItems.filter((id == survivorItems.id ) => {
-    //   survivorItems.qtd++;
-    // })
-    
-    console.log('lala', survivorItems);
-  }
-
-  function handleSubmitButton() {
-    if(isRecaptchaVerified) {
-      alert('You are a survivor!');
-    } else {
-      alert('Please verify that you are not a zombie');
-    }
+  function handleCaptcha() {
+    captchaVerified = true;
   }
 
   function handleSubmit(event) {
@@ -103,33 +101,44 @@ function RegisterSurvivor() {
     
     const { name, age, gender } = formData;
 
-    const [ latitude, lagitude ] = selectedPosition;
+    const [ latitude, longitude ] = selectedPosition;
 
-    const items = selectedItems;
+    if (name === '' || age === '' || gender === ''){
+      alert.error('Fill all fields');
+    }
+    else if (latitude === 0 && longitude === 0 ) {
+      alert.error('Inform your location');
+    } else if (captchaVerified === false) {
+      alert.error('Confirm that you not Logan Paul');
+    } else {
+      const data = {
+        name,
+        age, 
+        gender,
+        last_location_latitude: latitude,
+        last_location_longitude: longitude,
+        items: inventory
+      };
+      
+      api.post('/survivors', data)
+        .then((response) => {
+          if (response.status === 201) {
+            history.push('/registered', { params: [name, response.data.id] });
+          } else if (response.status === 208) {
+            alert.error(response.data.message);
+          } else {
+            alert.error('Unexpected error while creating a survivor');
+          }
+        });
+    }
 
-    const data = {
-      name,
-      age, 
-      gender,
-      latitude,
-      lagitude,
-      items
-    };
 
-    console.log(data);
-    // api.post('/survivors', data);
+    
   }
 
   return (
     <div id="page-register-survivor">
-      <header>
-        <Link to="/">
-          <FiArrowLeft /> Back to home
-        </Link>
-        
-        <h3 className="logo">TZR Survivors</h3>
-        
-      </header>
+      <Header />
       <form onSubmit={handleSubmit}>
         <h1>Register new survivor</h1>
 
@@ -144,6 +153,7 @@ function RegisterSurvivor() {
               name="name"
               id="name"
               onChange={handleFieldChange}
+              
             />
           </div>
 
@@ -155,13 +165,20 @@ function RegisterSurvivor() {
                 name="age"
                 id="age"
                 onChange={handleFieldChange}
+                
               />
             </div>
 
             <div className="field">
               <label htmlFor="name">Gender</label>
-              <select name="gender" id="gender" defaultValue="" onChange={handleFieldChange}>
-                <option value="" disabled hidden >Select</option>
+              <select 
+                name="gender" 
+                id="gender" 
+                defaultValue="" 
+                onChange={handleFieldChange}
+                
+              >
+                <option value="" disabled hidden>Select</option>
                 <option value="Female">Female</option>
                 <option value="Male">Male</option>
                 <option value="Not binary">Not binary</option>
@@ -192,37 +209,42 @@ function RegisterSurvivor() {
           </legend>
 
           <ul className="items-grid">
-            {items.map(item => {
+            {items.map((item, index) => {
+
               return (
                 <li 
-                  key={item.id} 
-                  className={selectedItems.includes(item.id) ? 'selected' : ''}
-                  // onClick={() => handleSelectItem(item.id)}
+                  key={item.id}
                 >
                   <div>
-                    <button onClick={handleDecrementQtdItem}>
-                      <FiMinusCircle />                    
+                    <button type="button" onClick={decrementQtdItem(index)}>
+                      {inventory[index].qtd === 0 ? <FiMinusCircle color="#e1e5e6" />  : <FiMinusCircle /> }
                     </button>
                     <img src={item.image} alt={item.name}/>
-                    <button onClick={handleQtdItem(item.id) }>
+                    <button type="button" onClick={incrementQtdItem(index)}>
                       <FiPlusCircle />                    
                     </button>
 
                   </div>
                   <span>
-                    {item.name} { qtdItem > 0 ? `x${qtdItem}` : ''}
-                  </span>
-                  
+                    {item.name} { inventory[index].qtd === 0 ? '' :  `x${inventory[index].qtd}` }
+                  </span>        
                 </li>
               )
             })}
           </ul>
+
         </fieldset>        
         <div className="submit-components">
+          
+          <div className="captcha-validation" onClick={handleCaptcha}>
+            <Captcha />
+          </div>
 
-          <Captcha />
 
-          <button className="submit-button" type="submit" onClick={handleSubmitButton}>
+          <button 
+            className="submit-button"
+            type="submit"                       
+          >
             Submit
           </button>          
         </div>

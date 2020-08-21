@@ -1,0 +1,18 @@
+.infected-component {
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #dbb0b0;
+  border-radius: 8px;
+  height: 100px;
+  border: solid 2px #a63a3a;
+  margin-top: 10px;
+  color: #263238;
+}
+
+@media(max-width: 400px) {
+  .infected-component {
+    font-size: 40px;
+  }
+}

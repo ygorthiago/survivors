@@ -1,0 +1,47 @@
+.survivor-name-input{
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.flag-survivor-component label h2 {  
+  justify-self: left !important;
+}
+
+.survivor-name-input input {
+  flex: 1;
+  background: #F0F0F5;
+  border-radius: 8px;
+  border: 0;
+  padding: 16px 24px;
+  font-size: 16px;
+  color: #6C6C80;
+  padding-left: 40px;
+}
+
+.survivor-name-input i {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  padding: 9px 8px;
+  color: #aaa;
+}
+
+.survivor-name-input button {
+  width: 200px;
+  height: 50px;
+  background: #a63a3a;
+  border-radius: 8px;
+  color: #FFF;
+  font-weight: bold;
+  font-size: 16px;
+  border: 0;
+  align-self: flex-end;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.survivor-name-input button:hover {
+  background-color: #993434;
+}

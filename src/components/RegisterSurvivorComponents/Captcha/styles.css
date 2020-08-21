@@ -65,3 +65,14 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* @media (max-width: 500px) {
+   #captcha {
+    font-size: 16px;
+    padding-left: 2px;
+  }
+
+  #checkbox {
+    margin-right: 2px;
+  }
+} */

@@ -1,33 +1,29 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import {FiArrowLeft, FiHash } from 'react-icons/fi';
-import api from '../../services/api';
 
-import './styles.css';
 import SurvivorProfile from '../../components/SurvivorProfile';
+import Header from '../../components/Header';
 
-function UserOptions() {
+import api from '../../services/api';
+import './styles.css';
+import { FiHash } from 'react-icons/fi';
+function SurvivorPage() {
   const [survivor, setSurvivor] = useState([]);
   const [id, setId] = useState('');
 
   async function searchSurvivor(e){
     e.preventDefault();
 
-    const response = await api.get(`survivors/${id}`, {   
+    const response = await api.get('/survivor', {   
+      params: {
+        id
+      }
     });
-    setSurvivor(response.data); 
-    console.log(response.data)
+    setSurvivor(response.data);    
   }
 
   return (
     <div className="container">
-      <header>
-        <Link to="/">
-          <FiArrowLeft />Back to home
-        </Link>
-        
-      <h3 className="logo">TRZ Survivors</h3>     
-      </header>
+      <Header />
 
       <form className="id-container" onSubmit={ searchSurvivor }>
         <h3>Survivor ID</h3>
@@ -44,11 +40,11 @@ function UserOptions() {
       </form>
 
       <main>
-        <SurvivorProfile />
+        {survivor.length !== 0 ? <SurvivorProfile survivor={ survivor.survivor[0] } inventory={survivor.inventory} /> : ''}
       </main>
     </div>
     
   )
 }
 
-export default UserOptions;
+export default SurvivorPage;
